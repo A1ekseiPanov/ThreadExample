@@ -3,15 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ru.panov</groupId>
+        <artifactId>ThreadExample</artifactId>
+        <version>1.0</version>
+    </parent>
 
-    <groupId>ru.panov</groupId>
-    <artifactId>ThreadExample</artifactId>
-    <version>1.0</version>
-    <packaging>pom</packaging>
-    <modules>
-        <module>Task1</module>
-        <module>Task2</module>
-    </modules>
+    <artifactId>Task2</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
