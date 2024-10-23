@@ -1,13 +1,18 @@
 package ru.panov;
 
+import java.util.Arrays;
 import java.util.Objects;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Класс RingBuffer представляет собой кольцевой буфер,
+ * который поддерживает операции добавления и удаления элементов с блокировками
+ * для обеспечения потокобезопасности.
+ *
+ * @param <T> Тип элементов, которые будут храниться в буфере.
+ */
 public class RingBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
@@ -19,13 +24,7 @@ public class RingBuffer<T> {
 
 
     public RingBuffer() {
-        this.capacity = 7;
-        this.buffer = new Object[this.capacity];
-        this.lock = new ReentrantLock();
-        this.empty = lock.newCondition();
-        this.addFlag = 0;
-        this.removeFlag = 0;
-        this.count = 0;
+        this(7);
     }
 
     public RingBuffer(int capacity) {
@@ -38,6 +37,15 @@ public class RingBuffer<T> {
         this.count = 0;
     }
 
+
+    /**
+     * Добавляет элемент в буфер.
+     * Если буфер полон, новый элемент замещает самый старый элемент.
+     *
+     * @param t Элемент для добавления (не может быть null).
+     * @return Добавленный элемент.
+     * @throws NullPointerException Если передан null-элемент.
+     */
     public T add(T t) {
         Objects.requireNonNull(t);
         lock.lock();
@@ -51,7 +59,7 @@ public class RingBuffer<T> {
                 count++;
             }
 
-            empty.signalAll();
+            empty.signal();
             return t;
 
         } finally {
@@ -59,6 +67,13 @@ public class RingBuffer<T> {
         }
     }
 
+    /**
+     * Удаляет и возвращает элемент из буфера.
+     * Если буфер пуст, поток ожидает, пока не появится элемент.
+     *
+     * @return Удалённый элемент.
+     * @throws RuntimeException Если поток был прерван во время ожидания.
+     */
     public T remove() {
         lock.lock();
         try {
@@ -79,10 +94,15 @@ public class RingBuffer<T> {
         }
     }
 
+    /**
+     * Возвращает копию текущего состояния буфера.
+     *
+     * @return Массив объектов, представляющий текущее состояние буфера.
+     */
     public Object[] getArray() {
         lock.lock();
         try {
-            return  buffer.clone();
+            return Arrays.copyOf(buffer, buffer.length);
         } finally {
             lock.unlock();
         }
