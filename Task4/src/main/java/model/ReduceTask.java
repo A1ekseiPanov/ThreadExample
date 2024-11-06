@@ -3,9 +3,19 @@ package model;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Класс ReduceTask представляет reduce задачу.
+ * Каждая задача содержит номер reduce задачи и список файлов, которые необходимо обработать.
+ */
 public class ReduceTask {
-    private int reduceNumberTask;
-    private List<String> files;
+    /**
+     * Номер reduce задачи
+     */
+    private final int reduceNumberTask;
+    /**
+     * Список файлов, связанных с кувгсу задачей
+     */
+    private final List<String> files;
 
     public ReduceTask(int reduceNumberTask, List<String> files) {
         this.reduceNumberTask = reduceNumberTask;
